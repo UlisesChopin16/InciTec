@@ -306,8 +306,8 @@ class _SubirReporteState extends State<SubirReporte> {
         DropdownButtonFormField(
           items: const [
             DropdownMenuItem(
-              value: 'Energía Electrica',
-              child: Text('Energía Electrica'),
+              value: 'Energía Eléctrica',
+              child: Text('Energía Eléctrica'),
             ),
             DropdownMenuItem(
               value: 'Agua',

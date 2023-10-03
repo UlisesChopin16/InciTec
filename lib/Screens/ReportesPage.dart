@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:incidencias_reportes/Constants/colors.dart';
-import 'package:incidencias_reportes/Controllers/GetDataController.dart';
 import 'package:incidencias_reportes/Models/reportes_model.dart';
 import 'package:incidencias_reportes/Screens/InfoReportesPage.dart';
 import 'package:incidencias_reportes/Services/firebase_service.dart';
@@ -46,7 +43,7 @@ class _ReportesPageState extends State<ReportesPage> {
                 builder: (context, snapshot) {
                   if(snapshot.hasData){
                     getDataReportes = GetDataModelReportes.fromJson(snapshot.data!);
-                    return ListView.builder(
+                    return ListView.builder( 
                       shrinkWrap: true,
                       itemCount: getDataReportes.reportes.length,
                       itemBuilder: (context, index) {

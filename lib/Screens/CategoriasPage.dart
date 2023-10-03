@@ -44,8 +44,8 @@ class _CategoriasPageState extends State<CategoriasPage> {
                       color: Colors.white,
                     ),
                 ),
-                accountEmail: const Text('17091037@zacatepec.tecnm.mx',
-                  style: TextStyle(
+                accountEmail: Text(widget.user.email!,
+                  style: const TextStyle(
                       fontSize: 18,
                       color: Colors.white,
                     ),
