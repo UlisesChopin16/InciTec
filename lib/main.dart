@@ -34,6 +34,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Palette.blueTec,
+        useMaterial3: false,
       ),
       home: const LoginPage()
       //  home: const CategoriasPage(),

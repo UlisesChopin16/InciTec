@@ -33,88 +33,91 @@ class _ReportesPageState extends State<ReportesPage> {
         appBar: AppBar(
           title: Text(widget.cat),
         ),
-        body: Container(
-          child: Center(
-            child: SizedBox(
-              width: w > 500 ? 500 : w,
-              height: h * 0.9,
-              child: FutureBuilder(
-                future: getReportes(),
-                builder: (context, snapshot) {
-                  if(snapshot.hasData){
-                    getDataReportes = GetDataModelReportes.fromJson(snapshot.data!);
-                    return ListView.builder( 
-                      shrinkWrap: true,
-                      itemCount: getDataReportes.reportes.length,
-                      itemBuilder: (context, index) {
-                        if(getDataReportes.reportes[index].categoria != widget.cat){
-                          return Container();
-                        }else{
-                          return  Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 15.0),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10.0),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.5),
-                                    spreadRadius: 2,
-                                    blurRadius: 2,
-                                    offset: Offset(2, 3),
-                                  ),
-                                ],
-                              ),
-                              child: ListTile(
-                                title: Text('Categoria: \n${widget.cat}'),
-                                subtitle: Text(
-                                  '${getDataReportes.reportes[index].ubicacion}\n'
-                                  +'${getDataReportes.reportes[index].fecha.toString().split(' ')[0]}\n'
-                                  +'Prioridad: ${getDataReportes.reportes[index].estado}' 
+        body: Center(
+          child: SizedBox(
+            width: w > 500 ? 500 : w,
+            height: h * 0.9,
+            child: FutureBuilder(
+              future: getReportes(),
+              builder: (context, snapshot) {
+                if(snapshot.hasData){
+                  getDataReportes = GetDataModelReportes.fromJson(snapshot.data!);
+                  return ListView.builder( 
+                    shrinkWrap: true,
+                    itemCount: getDataReportes.reportes.length,
+                    itemBuilder: (context, index) {
+                      final reportes = getDataReportes.reportes[index];
+                      if(reportes.categoria != widget.cat){
+                        return Container();
+                      }else{
+                        return  Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 15.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10.0),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.5),
+                                  spreadRadius: 2,
+                                  blurRadius: 2,
+                                  offset: const Offset(2, 3),
                                 ),
-                                leading: imagen(index),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  side: BorderSide( width: 2.0)
-                                ),
-                                onTap: () {
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => InfoReportesPage(
-                                    cat: widget.cat,
-                                    path: widget.path,
-                                    descripcion: getDataReportes.reportes[index].descripcion,
-                                    estado: getDataReportes.reportes[index].estado,
-                                    fecha: getDataReportes.reportes[index].fecha.toString().split(' ')[0],
-                                    imagen: getDataReportes.reportes[index].imagen,
-                                    nombreCompleto: getDataReportes.reportes[index].nombreCompleto,
-                                    ubicacion: getDataReportes.reportes[index].ubicacion,
-                                  )));
-                                },
-                              ),
+                              ],
                             ),
-                          );
-                        }
-                      },
-                    );
-                  }else{
-                    return CircularProgressIndicator();
-                  }
-                } ,
-              )
-            ),
+                            child: ListTile(
+                              title: Text('Categoria: \n${widget.cat}'),
+                              subtitle: Text(
+                                '${reportes.ubicacion}\n${reportes.fecha.toString().split(' ')[0]}\nPrioridad: ${reportes.estado}' 
+                              ),
+                              leading: imagen(index,reportes),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                                side: const BorderSide( width: 2.0)
+                              ),
+                              onTap: () {
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => InfoReportesPage(
+                                  cat: widget.cat,
+                                  path: widget.path,
+                                  descripcion: reportes.descripcion,
+                                  estado: reportes.estado,
+                                  fecha: reportes.fecha.toString().split(' ')[0],
+                                  imagen: reportes.imagen,
+                                  nombreCompleto: reportes.nombreCompleto,
+                                  ubicacion: reportes.ubicacion,
+                                )));
+                              },
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                  );
+                }else{
+                  return const Center(
+                    child: SizedBox(
+                      width: 80,
+                      height: 80,
+                      child: CircularProgressIndicator()
+                    )
+                  );
+                }
+              } ,
+            )
           ),
         ),
       );
   }
 
-  imagen(int index){
-    if(getDataReportes.reportes[index].imagen.isEmpty){
+  imagen(int index, Reporte reportes){
+    if(reportes.imagen.isEmpty){
       return Image.asset(
         widget.path,
         width: 100,
         height: 140,
         fit: BoxFit.cover,
       );
-    }else if(getDataReportes.reportes[index].imagen == 'img'){
+    }else if(reportes.imagen == 'img'){
       return Image.asset(
         widget.path,
         width: 100,
@@ -123,7 +126,7 @@ class _ReportesPageState extends State<ReportesPage> {
       );
     }else{
       return Image.network(
-        getDataReportes.reportes[index].imagen,
+        reportes.imagen,
         width: 100,
         height: 140,
         fit: BoxFit.cover,
@@ -131,131 +134,4 @@ class _ReportesPageState extends State<ReportesPage> {
     }
   }
 
-  // ListView.builder(
-  //                     shrinkWrap: true,
-  //                     itemCount: getDataReportes.reportes.length,
-  //                     itemBuilder: (context, index) {
-  //                       return  Padding(
-  //                         padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 15.0),
-  //                         child: Container(
-  //                           decoration: BoxDecoration(
-  //                             color: Colors.white,
-  //                             borderRadius: BorderRadius.circular(10.0),
-  //                             boxShadow: [
-  //                               BoxShadow(
-  //                                 color: Colors.black.withOpacity(0.5),
-  //                                 spreadRadius: 2,
-  //                                 blurRadius: 2,
-  //                                 offset: Offset(2, 3),
-  //                               ),
-  //                             ],
-  //                           ),
-  //                           child: ListTile(
-  //                             title: Text('Categoria: \n${widget.cat}'),
-  //                             subtitle: Text(
-  //                               '${getDataReportes.reportes[index].ubicacion}\n'
-  //                               +'${getDataReportes.reportes[index].fecha}\n'
-  //                               +'Prioridad: ${getDataReportes.reportes[index].estado}' 
-  //                             ),
-  //                             leading: Image.asset(
-  //                               widget.path,
-  //                               width: 100,
-  //                               height: 140,
-  //                               fit: BoxFit.cover,
-  //                             ),
-  //                             shape: RoundedRectangleBorder(
-  //                               borderRadius: BorderRadius.circular(10.0),
-  //                               side: BorderSide( width: 2.0)
-  //                             ),
-  //                             onTap: () {
-  //                               Navigator.push(context, MaterialPageRoute(builder: (context) => InfoReportesPage(
-  //                                 cat: widget.cat,
-  //                                 path: widget.path,
-  //                                 descripcion: getDataReportes.reportes[index].descripcion,
-  //                                 estado: getDataReportes.reportes[index].estado,
-  //                                 fecha: getDataReportes.reportes[index].fecha.toString(),
-  //                                 imagen: getDataReportes.reportes[index].imagen,
-  //                                 nombreCompleto: getDataReportes.reportes[index].nombreCompleto,
-  //                                 ubicacion: getDataReportes.reportes[index].ubicacion,
-  //                               )));
-  //                             },
-  //                           ),
-  //                         ),
-  //                       );
-  //                     },
-  //                   );
-
-  // Padding(
-  //                     padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 15.0),
-  //                     child: Container(
-  //                       decoration: BoxDecoration(
-  //                         color: Colors.white,
-  //                         borderRadius: BorderRadius.circular(10.0),
-  //                         boxShadow: [
-  //                           BoxShadow(
-  //                             color: Colors.black.withOpacity(0.5),
-  //                             spreadRadius: 2,
-  //                             blurRadius: 2,
-  //                             offset: Offset(2, 3),
-  //                           ),
-  //                         ],
-  //                       ),
-  //                       child: ListTile(
-  //                         title: Text('Categoria: \n${widget.cat}'),
-  //                         subtitle: Text(
-  //                           'Tecnologico de Zacatepec\n'
-  //                           +'${DateTime.now().toString().substring(0, 19)}\n'
-  //                           +'Prioridad: Alta' 
-  //                         ),
-  //                         leading: Image.asset(widget.path,
-  //                           width: 100,
-  //                           height: 140,
-  //                           fit: BoxFit.cover,
-  //                         ),
-  //                         shape: RoundedRectangleBorder(
-  //                           borderRadius: BorderRadius.circular(10.0),
-  //                           side: BorderSide( width: 2.0)
-  //                         ),
-  //                         onTap: () {
-  //                           Navigator.of(context).push(MaterialPageRoute(builder: (context) =>  InfoReportesPage(cat: widget.cat,path: widget.path,)));
-  //                         },
-  //                       ),
-  //                     ),
-  //                   ),
-
-  // FutureBuilder(
-  //               future: getReportes(),
-  //               builder: (context, snapshot) {
-  //                 if(snapshot.hasData){
-  //                   List reportes = snapshot.data as List;
-  //                   return ListView.builder(
-  //                     shrinkWrap: true,
-  //                     itemCount: reportes.length,
-  //                     itemBuilder: (context, index) {
-  //                       return Card(
-  //                         child: ListTile(
-  //                           onTap: (){
-  //                             Navigator.push(context, MaterialPageRoute(builder: (context) => InfoReportesPage(
-  //                               cat: reportes[index]['categoria'],
-  //                               path: reportes[index]['imagen'],
-  //                               descripcion: reportes[index]['descripcion'],
-  //                               estado: reportes[index]['estado'],
-  //                               fecha: reportes[index]['fecha'],
-  //                               imagen: reportes[index]['imagen'],
-  //                               nombreCompleto: reportes[index]['nombreCompleto'],
-  //                               ubicacion: reportes[index]['ubicacion'],
-  //                             )));
-  //                           },
-  //                           title: Text(snapshot.data[index]['titulo']),
-  //                           subtitle: Text(snapshot.data[index]['descripcion']),
-  //                           trailing: Text(snapshot.data[index]['estado']),
-  //                         ),
-  //                       );
-  //                     },
-  //                   );
-  //                 }else{
-  //                   return CircularProgressIndicator();
-  //                 }
-  //               },
-  //             ),
 }
