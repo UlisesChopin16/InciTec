@@ -74,7 +74,7 @@ class _InfoReportesPageState extends State<InfoReportesPage> {
                   color: Colors.black.withOpacity(0.5),
                   spreadRadius: 2,
                   blurRadius: 2,
-                  offset: Offset(2, 3),
+                  offset: const Offset(2, 3),
                 ),
               ],
             ),
@@ -94,7 +94,7 @@ class _InfoReportesPageState extends State<InfoReportesPage> {
                       ),
                     ),
                     const SizedBox(height: 20.0,),
-                    Container(
+                    SizedBox(
                       height: h * 0.4,
                       width: w * 0.8,
                       child: imagen(),
@@ -118,7 +118,7 @@ class _InfoReportesPageState extends State<InfoReportesPage> {
                     const SizedBox(height: 20.0,),
                     Text(
                       widget.fecha,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
@@ -135,7 +135,7 @@ class _InfoReportesPageState extends State<InfoReportesPage> {
                     const SizedBox(height: 20.0,),
                     Text(
                       widget.descripcion,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),

@@ -215,78 +215,11 @@ class _SubirReporteState extends State<SubirReporte> {
                     textDescripcion(),
                     const SizedBox(height: 20,),
                     const Text('Fotos'),
-                    ElevatedButton(
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(Colors.grey.shade300)
-                      ),
-                      onPressed: () {
-                        opciones(context);
-                      },
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          const SizedBox(height: 20,),
-                          Text('Agregar Imagen',
-                            style: TextStyle(
-                              color: Colors.black.withOpacity(0.50), 
-                              fontWeight: FontWeight.bold,
-                              fontSize: 30
-                            ),
-                          ),
-                          const SizedBox(height: 20,),
-                          if(imagen != null) 
-                            Image.memory(
-                              selectedImage,
-                              width: 401,
-                              height: 313,
-                            )
-                          else
-                            Image.asset('assets/camara.png',
-                              color: Colors.black.withOpacity(0.50),
-                            ),
-                          const SizedBox(height: 20,),
-                        ],
-                      ),
-                    ),
+                    botonFoto(),
                     const SizedBox(height: 30,),
                     // imagen == null ? Center() : Image.file(imagen!),
                     const SizedBox(height: 20,),
-                    ElevatedButton(
-                      onPressed: () async {
-                        // Navigator.of(context).push(MaterialPageRoute(builder: (context) => const CategoriasPage()));
-                        if(_formKey.currentState!.validate()){
-
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Subiendo Reporte')));
-
-                          // estampa de tiempo
-                          String data = await subirImagen(imagen!);
-
-                          print(data);
-                          if(data != ''){
-                            DateTime fecha = DateTime.now();
-                            bool data2 = await agregarReporte(
-                              descripcion: descripcion, 
-                              fecha: fecha,
-                              ubicacion: edificios, 
-                              estado: 'Pendiente', 
-                              imagen: data,
-                              categoria: categoria,
-                              nombreCompleto: widget.user.email.toString()
-                            );
-                            if(data2){
-                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Reporte subido correctamente')));
-                            }else{
-                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Error al subir el reporte')));
-                            }
-                          }else{
-                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Error al subir el reporte')));
-                          }
-                        }
-                        // Navigator.of(context).pop();
-                      }, 
-                      child: const  Text('Subir Reporte')
-                    ),
+                    botonSubirReporte(),
                     const SizedBox(height: 20,),
                   ],
                 ),
@@ -538,39 +471,75 @@ class _SubirReporteState extends State<SubirReporte> {
   }
   
   botonFoto(){
-    Column(
-      children: [ 
-        ElevatedButton(
-          style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all<Color>(Colors.grey.shade300)
+    ElevatedButton(
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all<Color>(Colors.grey.shade300)
+      ),
+      onPressed: () {
+        opciones(context);
+      },
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const SizedBox(height: 20,),
+          Text('Agregar Imagen',
+            style: TextStyle(
+              color: Colors.black.withOpacity(0.50), 
+              fontWeight: FontWeight.bold,
+              fontSize: 30
+            ),
           ),
-          onPressed: () {
-            opciones(context);
-          },
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+          const SizedBox(height: 20,),
+          if(imagen != null) 
+            Image.memory(
+              selectedImage,
+              width: 401,
+              height: 313,
+            )
+          else
+            Image.asset('assets/camara.png',
+              color: Colors.black.withOpacity(0.50),
+            ),
+          const SizedBox(height: 20,),
+        ],
+      ),
+    );
+  }
 
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: 20,),
-              Text('Agregar Imagen',
-                style: TextStyle(
-                  color: Colors.black.withOpacity(0.50), 
-                  fontWeight: FontWeight.bold,
-                  fontSize: 30
-                ),
-              ),
-              const SizedBox(height: 20,),
-              imagen == null ? Image.asset('assets/camara.png',
-                color: Colors.black.withOpacity(0.50),
-              ): Image.memory(selectedImage, width: 401, height: 313),
-              const SizedBox(height: 20,),
-            ],
-          ),
-        ),
-        // SizedBox(height: 30,),
-        // imagen == null ? Center() :Image.memory(selectedImage, width: 401, height: 313) 
-      ],
+  botonSubirReporte(){
+    return ElevatedButton(
+      onPressed: () async {
+        // Navigator.of(context).push(MaterialPageRoute(builder: (context) => const CategoriasPage()));
+        if(_formKey.currentState!.validate()){
+
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Subiendo Reporte')));
+
+          // estampa de tiempo
+          String data = await subirImagen(imagen!);
+          if(data != ''){
+            DateTime fecha = DateTime.now();
+            bool data2 = await agregarReporte(
+              descripcion: descripcion, 
+              fecha: fecha,
+              ubicacion: edificios, 
+              estado: 'Pendiente', 
+              imagen: data,
+              categoria: categoria,
+              nombreCompleto: widget.user.email.toString()
+            );
+            if(data2){
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Reporte subido correctamente')));
+            }else{
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Error al subir el reporte')));
+            }
+          }else{
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Error al subir el reporte')));
+          }
+        }
+        // Navigator.of(context).pop();
+      }, 
+      child: const Text('Subir Reporte')
     );
   }
 

@@ -39,6 +39,7 @@ class _LoginPageState extends State<LoginPage> {
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(email: email, password: password);
       user = userCredential.user;
       if(user != null){
+        _loading = false;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Login Successful'),
@@ -46,6 +47,7 @@ class _LoginPageState extends State<LoginPage> {
           )
         );
       }else{
+        _loading = false;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Login Failed'),
@@ -54,15 +56,14 @@ class _LoginPageState extends State<LoginPage> {
         );
       }
       return user;
-    }on FirebaseAuthException catch(e){
-
-        print(e.message);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('No user found for that email.'),
-            backgroundColor: Colors.red,
-          )
-        );
+    }catch(e){
+      _loading = false;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No user found for that email.'),
+          backgroundColor: Colors.red,
+        )
+      );
       return null;
     }
   }
@@ -374,19 +375,18 @@ class _LoginPageState extends State<LoginPage> {
 
           User? user = await loginUsingEmailPassword(email: email!, password: password!);
           if(user != null){
-            
+            _loading = false;
             Navigator.of(context).push(MaterialPageRoute(builder: (context) => CategoriasPage(user: user,)));
           }
-        }
-        else{
+        } else{
           setState(() {
             _loading = false;
             opcion = false;
             
-          final FocusScopeNode focus = FocusScope.of(context);
-          if (!focus.hasPrimaryFocus && focus.hasFocus) {
-            FocusManager.instance.primaryFocus?.unfocus();
-          }
+            final FocusScopeNode focus = FocusScope.of(context);
+            if (!focus.hasPrimaryFocus && focus.hasFocus) {
+              FocusManager.instance.primaryFocus?.unfocus();
+            }
           });
         }
       },
