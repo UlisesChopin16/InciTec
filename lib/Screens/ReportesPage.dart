@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:incidencias_reportes/Models/reportes_model.dart';
 import 'package:incidencias_reportes/Screens/InfoReportesPage.dart';
 import 'package:incidencias_reportes/Services/firebase_service.dart';
@@ -12,6 +13,8 @@ class ReportesPage extends StatefulWidget {
 }
 
 class _ReportesPageState extends State<ReportesPage> {
+
+  final servicios = Get.put(FirebaseServicesInciTec());
 
   double w = 0;
   double h = 0;
@@ -37,8 +40,8 @@ class _ReportesPageState extends State<ReportesPage> {
           child: SizedBox(
             width: w > 500 ? 500 : w,
             height: h * 0.9,
-            child: FutureBuilder(
-              future: getReportes(),
+            child: FutureBuilder<Map<String, List<Map<String, dynamic>>>>(
+              future: servicios.getReportes(),
               builder: (context, snapshot) {
                 if(snapshot.hasData){
                   getDataReportes = GetDataModelReportes.fromJson(snapshot.data!);

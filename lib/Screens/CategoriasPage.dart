@@ -1,18 +1,21 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:incidencias_reportes/Screens/GraficosPage.dart';
 import 'package:incidencias_reportes/Screens/ReportesPage.dart';
 import 'package:incidencias_reportes/Screens/SubirReportePage.dart';
 import 'package:incidencias_reportes/Screens/loginPage.dart';
+import 'package:incidencias_reportes/Services/firebase_service.dart';
 
 class CategoriasPage extends StatefulWidget {
-  final User user;
-  const CategoriasPage({Key? key,required this.user}) : super(key: key);
+  const CategoriasPage({Key? key,}) : super(key: key);
   @override
   State<CategoriasPage> createState() => _CategoriasPageState();
 }
 
 class _CategoriasPageState extends State<CategoriasPage> {
+
+  final servicios = Get.put(FirebaseServicesInciTec());
 
   double w = 0;
 
@@ -36,7 +39,7 @@ class _CategoriasPageState extends State<CategoriasPage> {
             ListTile(
               title: const Text('Subir reporte'),
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => SubirReporte(user: widget.user,)));
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const SubirReporte()));
               },
             ),
             ListTile(
@@ -50,7 +53,7 @@ class _CategoriasPageState extends State<CategoriasPage> {
             ListTile(
               title: const Text('Cerrar Sesión'),
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const LoginPage()));
+                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const LoginPage()));
               },
             ),
           ],
@@ -113,7 +116,7 @@ class _CategoriasPageState extends State<CategoriasPage> {
               color: Colors.white,
             ),
         ),
-        accountEmail: Text(widget.user.email!,
+        accountEmail: Text(servicios.email.value,
           style: const TextStyle(
               fontSize: 18,
               color: Colors.white,

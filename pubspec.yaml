@@ -46,6 +46,7 @@ dependencies:
   firebase_storage: ^11.2.5
   syncfusion_flutter_pdfviewer: ^23.2.4
   pdf: ^3.10.6
+  printing: ^5.11.1
 
 dev_dependencies:
   flutter_test:

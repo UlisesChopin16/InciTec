@@ -3,12 +3,12 @@ import 'dart:typed_data';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:incidencias_reportes/Services/firebase_service.dart';
 
 class SubirReporte extends StatefulWidget {
-  final User user;
-  const SubirReporte({super.key, required this.user});
+  const SubirReporte({super.key,});
 
   @override
   State<SubirReporte> createState() => _SubirReporteState();
@@ -16,8 +16,10 @@ class SubirReporte extends StatefulWidget {
 
 class _SubirReporteState extends State<SubirReporte> {
 
+  final servicios = Get.put(FirebaseServicesInciTec());
+
   Uint8List selectedImage = Uint8List(0);
-  File? imagen=null;
+  File? imagen;
   final picker = ImagePicker();
   double w = 0;
   double h = 0;
@@ -41,7 +43,6 @@ class _SubirReporteState extends State<SubirReporte> {
             selectedImage = imagen!.readAsBytesSync();
           });
         }else{
-          print('No seleccionaste Ninguna Foto');
         }
       });
     }else{
@@ -52,10 +53,10 @@ class _SubirReporteState extends State<SubirReporte> {
             selectedImage = imagen!.readAsBytesSync();
           });
         }else{
-          print('No tomaste Ninguna Foto');
         }
       });
     }
+    if(!context.mounted)return;
     Navigator.of(context).pop();
   }
 
@@ -64,7 +65,7 @@ class _SubirReporteState extends State<SubirReporte> {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        contentPadding: EdgeInsets.all(0),
+        contentPadding: const EdgeInsets.all(0),
         content: SingleChildScrollView(
           child: Column(
             children: [
@@ -78,8 +79,8 @@ class _SubirReporteState extends State<SubirReporte> {
                       border: Border(
                           bottom:
                               BorderSide(width: 1, color: Colors.grey))),
-                  child: Row(
-                    children: const [
+                  child: const Row(
+                    children:  [
                       Expanded(
                         child: Text(
                           'Tomar una foto',
@@ -97,8 +98,8 @@ class _SubirReporteState extends State<SubirReporte> {
                 },
                 child: Container(
                   padding: const EdgeInsets.all(20),
-                  child: Row(
-                    children: const [
+                  child: const Row(
+                    children: [
                       Expanded(
                         child: Text(
                           'Seleccionar una foto',
@@ -188,46 +189,50 @@ class _SubirReporteState extends State<SubirReporte> {
   @override
   Widget build(BuildContext context) {
     resolucion();
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Subir Reporte'),
-      ),
-      body: Center(
-        child: Form(
-          key: _formKey,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30.0),
-            child: SingleChildScrollView(
-              child: SizedBox(
-                width: w > 500 ? 500 : w,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    const SizedBox(height: 20,),
-                    dropEdifcios(),
-                    const SizedBox(height: 20,),
-                    dropCategoria(),
-                    const SizedBox(height: 20,),
-                    dropIncidencias(),
-                    const SizedBox(height: 20,),
-                    textDescripcion(),
-                    const SizedBox(height: 20,),
-                    const Text('Fotos'),
-                    botonFoto(),
-                    const SizedBox(height: 30,),
-                    // imagen == null ? Center() : Image.file(imagen!),
-                    const SizedBox(height: 20,),
-                    botonSubirReporte(),
-                    const SizedBox(height: 20,),
-                  ],
+    return Obx(
+      () {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Subir Reporte'),
+          ),
+          body: Center(
+            child: !servicios.loading.value ? Form(
+              key: _formKey,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                child: SingleChildScrollView(
+                  child: SizedBox(
+                    width: w > 500 ? 500 : w,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        const SizedBox(height: 20,),
+                        dropEdifcios(),
+                        const SizedBox(height: 20,),
+                        dropCategoria(),
+                        const SizedBox(height: 20,),
+                        dropIncidencias(),
+                        const SizedBox(height: 20,),
+                        textDescripcion(),
+                        const SizedBox(height: 20,),
+                        const Text('Fotos'),
+                        botonFoto(),
+                        const SizedBox(height: 30,),
+                        // imagen == null ? Center() : Image.file(imagen!),
+                        const SizedBox(height: 20,),
+                        botonSubirReporte(),
+                        const SizedBox(height: 20,),
+                      ],
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
-        ),
-      )
+            ): const CircularProgressIndicator(),
+          )
+        );
+      },
     );
   }
 
@@ -471,7 +476,7 @@ class _SubirReporteState extends State<SubirReporte> {
   }
   
   botonFoto(){
-    ElevatedButton(
+    return ElevatedButton(
       style: ButtonStyle(
         backgroundColor: MaterialStateProperty.all<Color>(Colors.grey.shade300)
       ),
@@ -516,25 +521,27 @@ class _SubirReporteState extends State<SubirReporte> {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Subiendo Reporte')));
 
           // estampa de tiempo
-          String data = await subirImagen(imagen!);
+          String data = await servicios.subirImagen(imagen!);
           if(data != ''){
             DateTime fecha = DateTime.now();
-            bool data2 = await agregarReporte(
+            bool data2 = await servicios.agregarReporte(
               descripcion: descripcion, 
               fecha: fecha,
               ubicacion: edificios, 
               estado: 'Pendiente', 
               imagen: data,
               categoria: categoria,
-              nombreCompleto: widget.user.email.toString()
+              nombreCompleto: servicios.email.value
             );
+            if(!context.mounted)return;
             if(data2){
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Reporte subido correctamente')));
+              servicios.snackBarSucces(message: 'Reporte subido correctamente', context: context);
             }else{
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Error al subir el reporte')));
+              servicios.snackBarError(message: 'Error al subir el reporte', context: context);
             }
           }else{
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Error al subir el reporte')));
+            if(!context.mounted)return;
+            servicios.snackBarError(message: 'Error al subir la imagen', context: context);
           }
         }
         // Navigator.of(context).pop();
